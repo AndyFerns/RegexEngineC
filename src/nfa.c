@@ -138,3 +138,53 @@ static Nfa* create_nfa_for_star(Nfa* nfa) {
     free(nfa);
     return new_nfa;
 }
+
+/**
+ * @brief Main function to build the NFA from a postfix expression.
+ * It uses a stack-based approach.
+ */
+Nfa* build_nfa_from_postfix(const char* postfix) {
+    Nfa* nfa_stack[1024]; // A simple stack for NFA fragments
+    int stack_top = -1;
+
+    for (int i = 0; postfix[i] != '\0'; i++) {
+        char token = postfix[i];
+
+        if (isalnum(token)) {
+            // If it's an operand, create a simple NFA for it and push to stack
+            nfa_stack[++stack_top] = create_nfa_for_char(token);
+        } else if (token == '.') {
+            // Concatenation: pop two, combine, push result
+            Nfa* nfa2 = nfa_stack[stack_top--];
+            Nfa* nfa1 = nfa_stack[stack_top--];
+            nfa_stack[++stack_top] = create_nfa_for_concat(nfa1, nfa2);
+        } else if (token == '|') {
+            // Union: pop two, combine, push result
+            Nfa* nfa2 = nfa_stack[stack_top--];
+            Nfa* nfa1 = nfa_stack[stack_top--];
+            nfa_stack[++stack_top] = create_nfa_for_union(nfa1, nfa2);
+        } else if (token == '*') {
+            // Star: pop one, apply star, push result
+            Nfa* nfa = nfa_stack[stack_top--];
+            nfa_stack[++stack_top] = create_nfa_for_star(nfa);
+        }
+    }
+
+    if (stack_top != 0) {
+        fprintf(stderr, "Error: NFA stack should have exactly one item at the end.\n");
+        return NULL;
+    }
+
+    // The final NFA is the only item left on the stack.
+    Nfa* final_nfa = nfa_stack[stack_top--];
+    // Mark its end state as the one and only accepting state.
+    final_nfa->end->is_accepting = 1;
+    return final_nfa;
+}
+
+// TODO: Implement free_nfa to prevent memory leaks
+void free_nfa(Nfa* nfa) {
+    // TODO
+    // This requires a graph traversal (like DFS or BFS) to visit and free all states
+    // and transitions to avoid memory leaks. 
+}

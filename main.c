@@ -18,12 +18,10 @@ int main(int argc, char* argv[]) {
     printf("String to test:     %s\n", test_string);
     printf("\n--- Phase 1: Parsing ---\n");
 
-    // Preprocess the regex to add explicit concatenation
     char preprocessed_regex[1024];
     preprocess_regex(infix_regex, preprocessed_regex, sizeof(preprocessed_regex));
     printf("Preprocessed Regex: %s\n", preprocessed_regex);
 
-    // Convert the preprocessed regex to postfix notation
     char postfix_regex[1024];
     if (regex_to_postfix(preprocessed_regex, postfix_regex, sizeof(postfix_regex)) != 0) {
         fprintf(stderr, "Error converting to postfix.\n");
@@ -31,14 +29,24 @@ int main(int argc, char* argv[]) {
     }
     printf("Postfix Notation:   %s\n", postfix_regex);
 
-    printf("\n--- Phase 2: NFA Construction (TODO) ---\n");
-    // Next step: Call a function to build the NFA from postfix_regex
-    // Nfa* nfa = build_nfa_from_postfix(postfix_regex);
+    printf("\n--- Phase 2: NFA Construction ---\n");
+    Nfa* nfa = build_nfa_from_postfix(postfix_regex);
+
+    if (nfa) {
+        printf("NFA constructed successfully!\n");
+        printf("Start State ID: %d, End State ID: %d\n", nfa->start->id, nfa->end->id);
+    } else {
+        fprintf(stderr, "NFA construction failed.\n");
+        return 1;
+    }
 
     printf("\n--- Phase 3: Simulation (TODO) ---\n");
     // Final step: Simulate the NFA against the test string
     // int is_match = simulate_nfa(nfa, test_string);
     // printf("Result: %s\n", is_match ? "Match" : "No Match");
+
+    // We will implement a proper free function later to avoid memory leaks.
+    // free_nfa(nfa);
 
     return 0;
 }

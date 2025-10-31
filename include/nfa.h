@@ -56,4 +56,18 @@ Nfa* create_nfa_for_union(Nfa* nfa1, Nfa* nfa2);
  */
 Nfa* create_nfa_for_star(Nfa* nfa);
 
+/**
+ * @brief Builds a complete NFA from a postfix regular expression.
+ * @param postfix The postfix regex string.
+ * @return A pointer to the final Nfa, or NULL on failure.
+ */
+Nfa* build_nfa_from_postfix(const char* postfix);
+
+/**
+ * @brief Frees all memory associated with an NFA.
+ * (Important for preventing memory leaks - we will implement this later)
+ * @param nfa The NFA to free.
+ */
+void free_nfa(Nfa* nfa);
+
 #endif

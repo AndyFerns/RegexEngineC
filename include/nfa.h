@@ -27,36 +27,6 @@ typedef struct Nfa {
 
 
 /**
- * @brief Creates a new NFA fragment for a single character.
- * @param c The character for the transition.
- * @return A pointer to the newly created Nfa fragment.
- */
-Nfa* create_nfa_for_char(char c);
-
-/**
- * @brief Combines two NFA fragments using the concatenation operation.
- * @param nfa1 The first NFA fragment.
- * @param nfa2 The second NFA fragment.
- * @return A new Nfa fragment representing the concatenation.
- */
-Nfa* create_nfa_for_concat(Nfa* nfa1, Nfa* nfa2);
-
-/**
- * @brief Combines two NFA fragments using the union (OR) operation.
- * @param nfa1 The first NFA fragment.
- * @param nfa2 The second NFA fragment.
- * @return A new Nfa fragment representing the union.
- */
-Nfa* create_nfa_for_union(Nfa* nfa1, Nfa* nfa2);
-
-/**
- * @brief Applies the Kleene star operation to an NFA fragment.
- * @param nfa The NFA fragment to apply the star to.
- * @return A new Nfa fragment representing the star operation.
- */
-Nfa* create_nfa_for_star(Nfa* nfa);
-
-/**
  * @brief Builds a complete NFA from a postfix regular expression.
  * @param postfix The postfix regex string.
  * @return A pointer to the final Nfa, or NULL on failure.

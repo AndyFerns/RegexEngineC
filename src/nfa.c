@@ -1,6 +1,7 @@
 #include "nfa.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>
 
 // A global counter to give each state a unique ID.
 static int state_id_counter = 0;

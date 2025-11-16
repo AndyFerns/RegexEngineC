@@ -185,7 +185,8 @@ Nfa* build_nfa_from_postfix(const char* postfix) {
 
 // TODO: Implement free_nfa to prevent memory leaks
 void free_nfa(Nfa* nfa) {
-    // TODO
-    // This requires a graph traversal (like DFS or BFS) to visit and free all states
-    // and transitions to avoid memory leaks. 
+    // TODO: This requires a graph traversal (like DFS or BFS) 
+    // to visit and free all states and transitions to avoid memory leaks. 
+    (void)nfa;
+
 }

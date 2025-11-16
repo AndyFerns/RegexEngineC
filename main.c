@@ -40,13 +40,18 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    printf("\n--- Phase 3: Simulation (TODO) ---\n");
+    printf("\n--- Phase 3: Simulation ---\n");
     // Final step: Simulate the NFA against the test string
-    // int is_match = simulate_nfa(nfa, test_string);
-    // printf("Result: %s\n", is_match ? "Match" : "No Match");
+    // 1. Call the simulator
+    int is_match = simulate_nfa(nfa, test_string); 
+    
+    // 2. Optionally print the final result (for manual runs)
+    // printf("%s\n", is_match ? "Match" : "No Match");
+    
+    // (Note: We're not freeing the NFA memory. For a real app, you'd
+    // need a recursive function to free all states and transitions.)
 
-    // We will implement a proper free function later to avoid memory leaks.
-    // free_nfa(nfa);
-
-    return 0;
+    // 3. Return 0 for match (success) and 1 for no match (failure)
+    // This is what tests/run_tests.bat will check!
+    return is_match ? 0 : 1;
 }

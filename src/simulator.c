@@ -28,7 +28,7 @@ static void add_state_to_set(State* state, State** set, int* count) {
     }
 
     // check if state is already in the set
-    for (int i = 0; i < count; i++) {
+    for (int i = 0; i < *count; i++) {
         if (set[i] == state) {
             return; // return if theres a duplicate already present
         }

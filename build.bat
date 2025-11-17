@@ -11,7 +11,7 @@ REM Define the target executable name
 SET TARGET=bin\regex_engine.exe
 
 REM Find all source files in the project
-SET SOURCES=main.c src\parser.c src\nfa.c src\simulator.c
+SET SOURCES=main.c src\parser.c src\nfa.c src\simulator.c src\dfa.c
 
 REM --- Compilation Step ---
 echo Compiling project...

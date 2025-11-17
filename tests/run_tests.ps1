@@ -8,7 +8,6 @@ $passCount = 0
 $failCount = 0
 
 # --- Test Suite ---
-# Define all test cases in an array
 $testCases = @(
     # Group 1: Literals
     @{ Pattern = "a"; String = "a"; Expected = "Match" },
@@ -52,41 +51,68 @@ $testCases = @(
     @{ Pattern = "(a|b)*"; String = "ababbac"; Expected = "NoMatch" },
     @{ Pattern = "(a|b)*c"; String = "c"; Expected = "Match" },
     @{ Pattern = "(a|b)*c"; String = "aabbc"; Expected = "Match" },
-    @{ Pattern = "(a|b)*c"; String = "aabba"; Expected = "NoMatch" }
+    @{ Pattern = "(a|b)*c"; String = "aabba"; Expected = "NoMatch" },
+
+    # Group 7: Complex / DFA Stress Tests (New!)
+    # These test if state merging works correctly
+    @{ Pattern = "((a|b)*)c"; String = "abababc"; Expected = "Match" },
+    @{ Pattern = "a*b*c*"; String = "aaabbc"; Expected = "Match" },
+    @{ Pattern = "a*b*c*"; String = "c"; Expected = "Match" }, # Zero a's and zero b's
+    @{ Pattern = "a*b*c*"; String = "aaacbb"; Expected = "NoMatch" } # Order violation
 )
 
-Write-Host "Running tests..."
-Write-Host ""
+# Define the modes we want to run
+$modes = @(
+    @{ Name = "NFA SIMULATION"; ArgList = @() },
+    @{ Name = "DFA SIMULATION"; ArgList = @("--dfa") }
+)
 
-# --- Run Tests ---
-foreach ($test in $testCases) {
-    # Run the executable, supressing its stdout
-    & $executable $test.Pattern $test.String > $null
-    
-    # Get the exit code (0 = Match, 1 = NoMatch)
-    $exitCode = $LASTEXITCODE
-    
-    # Determine what the engine reported
-    $result = if ($exitCode -eq 0) { "Match" } else { "NoMatch" }
+# --- Run Tests Loop ---
+foreach ($mode in $modes) {
+    Write-Host ""
+    Write-Host "==========================================" -ForegroundColor Cyan
+    Write-Host "  RUNNING $($mode.Name)" -ForegroundColor Cyan
+    Write-Host "==========================================" -ForegroundColor Cyan
+    Write-Host ""
 
-    # Check against expectation
-    if ($result -eq $test.Expected) {
-        Write-Host -ForegroundColor Green "  [PASS] '$($test.Pattern)' vs '$($test.String)' (Expected: $($test.Expected))"
-        $passCount++
-    } else {
-        Write-Host -ForegroundColor Red "  [FAIL] '$($test.Pattern)' vs '$($test.String)' (Expected: $($test.Expected), Got: $result)"
-        $failCount++
+    foreach ($test in $testCases) {
+        # Build the arguments: Flag (if any) + Pattern + String
+        $argsToRun = $mode.ArgList + $test.Pattern + $test.String
+
+        # Run the executable, supressing its stdout
+        # We use the call operator '&' to pass the array of arguments cleanly
+        & $executable $argsToRun > $null
+        
+        # Get the exit code (0 = Match, 1 = NoMatch)
+        $exitCode = $LASTEXITCODE
+        
+        # Determine what the engine reported
+        $result = if ($exitCode -eq 0) { "Match" } else { "NoMatch" }
+
+        # Check against expectation
+        if ($result -eq $test.Expected) {
+            Write-Host -ForegroundColor Green "  [PASS] '$($test.Pattern)' vs '$($test.String)' (Expected: $($test.Expected))"
+            $passCount++
+        } else {
+            Write-Host -ForegroundColor Red "  [FAIL] '$($test.Pattern)' vs '$($test.String)' (Expected: $($test.Expected), Got: $result)"
+            $failCount++
+        }
     }
 }
 
 # --- Summary ---
-$totalCount = $testCases.Count
+$totalTestsRun = $testCases.Count * $modes.Count
+
 Write-Host ""
 Write-Host "---------------------------------"
-Write-Host "Test Summary:"
-Write-Host "  Total: $totalCount"
-Write-Host -ForegroundColor Green "  Passed: $passCount"
-Write-Host -ForegroundColor Red "  Failed: $failCount"
+Write-Host "Final Test Summary:"
+Write-Host "  Total Tests Run: $totalTestsRun"
+Write-Host -ForegroundColor Green "  Passed:          $passCount"
+if ($failCount -gt 0) {
+    Write-Host -ForegroundColor Red "  Failed:          $failCount"
+} else {
+    Write-Host -ForegroundColor Green "  Failed:          $failCount"
+}
 Write-Host "---------------------------------"
 
 # Set the exit code for the script itself

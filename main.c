@@ -71,11 +71,13 @@ int main(int argc, char* argv[]) {
         }
         printf("DFA constructed successfully (%d states).\n", dfa->num_states);
         
-        // Optional: Uncomment to see the full DFA structure
-        // print_dfa(dfa); 
-
+        // DFA displaying + simulation
         printf("\n--- Phase 4: DFA Simulation ---\n");
         is_match = simulate_dfa(dfa, test_string);
+
+        // Optional: Uncomment to see the full DFA structure
+        print_dfa(dfa); 
+
 
         // Clean up the DFA
         free_dfa(dfa);

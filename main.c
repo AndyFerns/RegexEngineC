@@ -46,7 +46,7 @@ int main(int argc, char* argv[]) {
     int is_match = simulate_nfa(nfa, test_string); 
     
     // 2. Optionally print the final result (for manual runs)
-    // printf("%s\n", is_match ? "Match" : "No Match");
+    printf("%s\n", is_match ? "Match" : "No Match");
     
     // (Note: We're not freeing the NFA memory. For a real app, you'd
     // need a recursive function to free all states and transitions.)
